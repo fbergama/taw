@@ -27,3 +27,20 @@ console.log("---");
 for( let p in c ) {
     console.log(`c.${p} = ${c[p]}`)
 }
+
+
+// Delete a property
+delete c.radius         // radius is deleted from c but not
+                        // from its prototype!
+
+for( let p in c ) {
+    console.log(`c.${p} = ${c[p]}`)
+}
+
+
+// Spreading operator
+let coloredcircle = { ...c, ...unitcircle, color:"red" }
+
+for( let p in coloredcircle ) {
+    console.log(`coloredcircle.${p} = ${coloredcircle[p]}`)
+}
