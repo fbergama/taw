@@ -5,6 +5,7 @@ this keyword
 
 
 // in browser, this refer to window object if invoked in global scope
+// in Node.js, this refers to the "global" object
 function f() {
     console.log(this); // object of type "global"
 }
@@ -19,11 +20,17 @@ f2();
 
 let o = {
     prop: 10,
-    f: function() { return this.prop; } // function invoked as method
+    f: function() { return this.prop; } // f is a property of an object 
 }
-console.log( o.f() );
+console.log( o.f() );   // f is invoked as a method, so "this" refers to o
+let ff = o.f;
+console.log( ff() );    // f is invoked as as an expression, so "this" refers to the 
+                        // global object and this.prop is undefined because prop is 
+                        // not a property of the global object
 
 
+
+{
 // "this" in the prototype chain refers to the object on which the
 // method is invoked, not the object that actually contains the method
 let o2 = Object.create(o);
@@ -36,37 +43,40 @@ function printprop() {
 
 // When call is used, this refer to the object passed as the first argument
 printprop.call( o );
+}
 
 
-
+{
 // When using arrow functions, the this keyword is inherited from the environment 
 // in which the arrow function is defined rather than when is invoked
 // This feature is called "lexical this"
 
-function TestObject1() {
+function Object1() {
     this.x = 5;
     this.getx = () => { return this.x } // here we use the arrow function
 }
-function TestObject2() {
+function Object2() {
     this.x = 7;
     this.getx = function()  { return this.x } // here we use the classic JS function definition
 }
 
-let o3 = new TestObject1();
-let oo = Object.create(o3);
-let o4 = new TestObject2();
+let o1 = new Object1();
+let o2 = new Object2();
 
-console.log( o3.getx() )
-console.log( o4.getx() )
+console.log( o1.getx() )
+console.log( o2.getx() )
 
-let o5 = {
+let o3 = {
     x: 100,
-    getx: o3.getx
+    getx: o1.getx
 }
-let o6 = {
+let o4 = {
     x: 100,
-    getx: o4.getx
+    getx: o2.getx
 }
 
-console.log( o5.getx() ) // Prints 5 because this in the arrow function refers to o3, not o5!
-console.log( o6.getx() ) // Prints 100
+console.log( o3.getx() ) // Prints 5 because this in the arrow function refers to o1, not o3!
+console.log( o4.getx() ) // Prints 100
+
+
+}

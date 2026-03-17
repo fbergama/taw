@@ -44,3 +44,18 @@ let coloredcircle = { ...c, ...unitcircle, color:"red" }
 for( let p in coloredcircle ) {
     console.log(`coloredcircle.${p} = ${coloredcircle[p]}`)
 }
+
+
+
+// Note about const:
+// A const variable referencing to an object cannot
+// be changed to point to some other object, but 
+// the object properties can be modified (the reference
+// remains unchanged)
+
+let a = { x:10 }
+console.log( a.x )
+const b = a;
+b.x = 20;
+//b = 3;  // <- this triggers a type error
+console.log( a.x )

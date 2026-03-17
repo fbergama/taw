@@ -2,13 +2,14 @@
 Hoisting example
 ************************************************/
 
-//let a = 10;
 console.log(a); // throws a ReferenceError because a is not yet declared 
+let a = 3;
 
 if (true) {
+    //let a = 10;
     console.log(`b=${b}`);  // b exists (undefined) even if it hasn't been declared yet
     var b=20;
-    console.log(`b=${b}`);
+    // console.log(`b=${b}`);
 }
 
 console.log(a);
