@@ -1,5 +1,6 @@
 /************************************************
-Creating classes in JavaScript
+This example shows how to implement classes
+using prototype/based inheritance
 ************************************************/
 
 // Class constructor
@@ -16,9 +17,9 @@ function Range( from, to ) {
     this.to = to;
 }
 
-// Since Range function is also an object, it has the "prototype" property.
-// By modifying the function prototype we can define all the properties of
-// all the instances of class Range
+// By modifying the function prototype property we can define all 
+// the properties of the instances of class Range
+
 Range.prototype = {
 
     includes:  function( x ) {
@@ -48,6 +49,7 @@ r.foreach( console.log );
 // The identity of a class depends by the object prototype, not the constructor
 // used to build it. Two objects can be instance of the same class even if they
 // have been built with different constructors but have the same prototype
+
 function RangeDefault() {
     'use strict'
     this.from = 0;

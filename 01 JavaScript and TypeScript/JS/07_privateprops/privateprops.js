@@ -1,6 +1,6 @@
 /************************************************
-Example of how to implement public and private
-properties for JS Classes
+Example of how to use closures to simulate private
+properties of a class 
 ************************************************/
 
 // Let's modify the Range class to let from and to
