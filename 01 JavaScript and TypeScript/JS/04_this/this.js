@@ -80,3 +80,27 @@ console.log( o4.getx() ) // Prints 100
 
 
 }
+
+
+// Variadic functions
+// ================================
+// JavaScript functions accept a variable number 
+// of parameters even if not explicitly declared in the 
+// function signature 
+
+function fvar( a, b, c )
+{
+    console.log(`a = ${a}`);
+    console.log(`b = ${b}`);
+    console.log(`c = ${c}`);
+
+    for( i=0; i<arguments.length; ++i ) {
+        console.log(`arguments[${i}] = ${arguments[i]}`);
+    }
+}
+
+// f invoked with fewer arguments as expected
+fvar( 1, 2 )
+
+// f invoked with more arguments as expected
+fvar( 1, 2, 3, 4, 5, 6 )
