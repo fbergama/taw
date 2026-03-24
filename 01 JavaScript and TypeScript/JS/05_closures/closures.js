@@ -13,7 +13,9 @@ console.log( checkscope()() );
 
 // some of useful idioms using closures
 
-// 1) Singleton
+
+// 1) Singletons using Immediately Invoked Function Expression (IIFE)
+//
 let unique_integer = (function() {
     let counter = 0;
     return function() { return counter++; }
@@ -22,6 +24,7 @@ let unique_integer = (function() {
 console.log( unique_integer() );
 console.log( unique_integer() );
 console.log( unique_integer() );
+
 
 // 2) Closure used to implement private variables
 console.log("---")
