@@ -2,11 +2,21 @@
 TS uses annotations to explicitly provide type
 information to variables
 
-compile with:
-$ npx tsc type_annotations.ts
+Datatypes:
 
-after installing the project dependencies with: 
-$ npm install
+Name                        Values
+----------------------------------------------------------------
+boolean                     true / false
+number                      All floating point numbers
+string                      Strings
+Array< base > or base[ ]    Every array in which elements are of a base type
+any                         Type representing any value (useful when the 
+                            type is unknown during transpilation)
+void                        Type representing the absence of a value 
+                            (like functions not returning any value)
+Object                      Everything that is not a primitive type 
+                            in JavaScript
+
 ************************************************/
 
 let myname: string = 'Filippo';

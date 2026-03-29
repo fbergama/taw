@@ -1,6 +1,12 @@
 /************************************************
 This example demonstrates how to use interfaces
 to describe the properties of objects and classes
+
+
+Note that TS interfaces do not produce any associated 
+JavaScript code! They are meant to be used exclusively 
+by the type checker.
+
 ************************************************/
 
 interface Point {
