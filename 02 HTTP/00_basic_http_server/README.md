@@ -4,11 +4,12 @@ Compile with `tsc`, then run `node server.js`
 
 ## Testing the webserver
 
-To test it with the browser, open (http://localhost:8080/index.html)[http://localhost:8080/index.html]
+To test it with the browser, open [http://localhost:8080/index.html](http://localhost:8080/index.html)
 
 ### Testing with telnet
 
-Run
+Run:
+
 ```
 telnet localhost 8080
 ```
@@ -50,7 +51,7 @@ Accept-Encoding: gzip
 ```
 
 Note how the connection is kept alive for a few seconds before timeout.
-The `Host` header is mandatory in `HTTP/1.1` to support Name-Based Virtual Hosting.
+The `Host` header is mandatory in `HTTP/1.1` to support *Name-Based Virtual Hosting*.
 
 ### Get just the headers
 
