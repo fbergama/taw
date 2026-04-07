@@ -680,3 +680,5 @@
 02 HTTP/node_modules/yn/readme.md
 02 HTTP/00_basic_http_server/server.js
 02 HTTP/00_basic_http_server/server.js.map
+02 HTTP/01_cookies/server.js
+02 HTTP/01_cookies/server.js.map
