@@ -26,7 +26,7 @@ With JWT, because the token is a signed string that cannot be modified, we have
 to generate a completely new JWT with `visits + 1` and send it back to overwrite
 the old cookie.
 
-## The server cannot "delete" the session
+### The server cannot "delete" the session
 
 Look closely at the DELETE resource. All the server does is tell the browser to
 drop the cookie. If an attacker copied that JWT string before it was deleted,

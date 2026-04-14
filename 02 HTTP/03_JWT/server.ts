@@ -61,7 +61,6 @@ const server = http.createServer((req: http.IncomingMessage, res: http.ServerRes
         
         // 1. Parse incoming cookies to see if the browser sent a "userid"
         const cookies = parseCookies(req.headers.cookie);
-        const userId = cookies['userid'];
 
         // ==========================================
         // ROUTE A: GET /cookiepage?name=username
