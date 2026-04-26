@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: Postmessages API
+  version: 1.0.0
+  description: A simple web application for the Web Technologies and Applications course.
+paths:
+  /api/v1/:
+    get:
+      summary: Get API Info
+      description: Returns the version and a list of available endpoints.
+      responses:
+        '200':
+          description: Successful response containing API version and available routes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: 1.0.0
+                  endpoints:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      - GET /
+                      - GET /messages
+                      - POST /messages
+                      - DELETE /messages?index=<n>
+
+  /api/v1/messages:
+    get:
+      summary: Retrieve all messages
+      description: Returns all the posted messages.
+      responses:
+        '200':
+          description: A successful list of messages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    content:
+                      type: string
+                      example: message text
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - tag 1
+                        - tag 2
+                    timestamp:
+                      type: date
+                      example: 2026-04-26T19:27:39.836Z
+    
+    post:
+      summary: Post a new message
+      description: Post a new message to the server.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: This is a new message
+                tags:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - tag1
+                    - tag2
+              required:
+                - message
+      responses:
+        '200':
+          description: ok.
+          
+    delete:
+      summary: Delete a message
+      description: Delete the n^th message from the list.
+      parameters:
+        - name: index
+          in: query
+          required: true
+          description: The index (n) of the message to delete.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Message successfully deleted.
+        '400':
+          description: Bad request (e.g., invalid index).

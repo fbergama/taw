@@ -1,0 +1,20 @@
+{
+    "name": "postmessages",
+    "main": "postmessages",
+    "version": "1.0.0",
+    "author": "Filippo Bergamasco",
+    "dependencies": {
+        "colors": "^1.4.0"
+    },
+    "devDependencies": {
+        "@redocly/cli": "^2.30.0",
+        "@types/node": "^22.19.17",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.0"
+    },
+    "scripts": {
+        "compile": "tsc",
+        "doc": "redocly build-docs openapi.yaml -o api-docs.html"
+    },
+    "private": true
+}
