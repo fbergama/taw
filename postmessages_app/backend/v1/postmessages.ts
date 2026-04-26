@@ -31,11 +31,14 @@
  */
 
 
+// TypeScript modules import
+
 import * as http from 'http';                 // HTTP module
 import * as url from 'url';                   // URL module (for parsing request)
-import {Message} from './Message';
-import {isMessage} from './Message';
 
+import {Message, isMessage} from './Message';
+
+// CommonJS modules import
 
 import fs = require('fs');                    // filesystem module
 import colors = require('colors');
@@ -49,6 +52,19 @@ let messages: Message[] = [];
 
 // All the incoming messages will also be written to a text file
 let ostream: fs.WriteStream;
+
+
+function send_response( res:http.ServerResponse, status_code:number, response_data:object )
+{
+    console.log("RESPONSE:");
+    console.log(`Status: ${status_code}`);
+    console.log(`Body: ${JSON.stringify(response_data)}`);
+
+    res.writeHead(status_code, { "Content-Type": "application/json" });
+    res.write( JSON.stringify(response_data), "utf-8");
+    res.end();
+    console.log("Response finished".inverse);
+}
 
 
 let server = http.createServer( ( req, res ) => {
@@ -79,16 +95,8 @@ let server = http.createServer( ( req, res ) => {
 
         console.log("Request end");
 
-        let response_data: object = {
-            error: true,
-            errormessage: "Invalid endpoint/method"
-        };
-        let status_code: number = 404;
-
-
         if( req.url == "/api/v1/" && req.method=="GET") {
-            status_code = 200;
-            response_data = {
+            let response_data = {
                                 "version": "1.0.0",
                                 "endpoints": [
                                     "GET /",
@@ -97,14 +105,23 @@ let server = http.createServer( ( req, res ) => {
                                     "DELETE /messages?index=<n>"
                                 ]
                             }
-        }
 
-        if( req.url == "/api/v1/messages" && req.method == "GET" ) {
-            status_code = 200;
-            response_data = messages;
-        }
+            send_response( res, 200, response_data);
 
-        if( req.url == "/api/v1/messages" && req.method == "POST" ) {
+            // Do you want to test the NodeJS event loop? Uncomment
+            // the following line to delay the response, and verify
+            // that other clients/endpoints are unaffected by this change:
+
+            //setTimeout( ()=>{ send_response(res,200,response_data); }, 5000);
+
+            return;
+        }
+        else if( req.url == "/api/v1/messages" && req.method == "GET" ) {
+
+            send_response( res, 200, messages );
+            return;
+        }
+        else if( req.url == "/api/v1/messages" && req.method == "POST" ) {
             console.log("Received: " + body);
 
             try {
@@ -118,26 +135,22 @@ let server = http.createServer( ( req, res ) => {
                         console.log("Message appended to file");
                     });
 
-                    status_code = 200;
-                    response_data = { error: false, errormessage: "" };
+                    send_response( res, 200, {error:false, errormessage:""});
+                    return;
 
                 } else {
 
-                    status_code = 400;
-                    response_data = { error: true, errormessage: "Data is not a valid Message" };
+                    send_response( res, 400, { error: true, errormessage: "Data is not a valid Message" } );
+                    return;
                 }
 
             } catch( e ) {
 
-                status_code = 400;
-                response_data = {
-                    error: true,
-                    errormessage: "JSON parse failed"
-                };
+                send_response( res, 400, {error:true, errormessage:"JSON parse failed."});
+                return;
             }
         }
-
-        if( req.url && req.url.search( "/api/v1/messages" )!=-1 && req.method == "DELETE" ) {
+        else if( req.url && req.url.search( "/api/v1/messages" )!=-1 && req.method == "DELETE" ) {
             let parsedquery = url.parse( req.url, true /* true=parse query string*/).query;
             console.log(" Query: ".red + JSON.stringify(parsedquery));
 
@@ -147,22 +160,17 @@ let server = http.createServer( ( req, res ) => {
             if( queryidx < messages.length ) {
                 messages[ queryidx ] = messages[ messages.length-1 ];
                 messages.pop();
-                status_code = 200;
-                response_data = { error: false, errormessage: "" };
+
+                send_response( res, 200, {error:false, errormessage:""});
+                return;
 
             } else {
-
-                status_code = 400;
-                response_data = {
-                    error: true,
-                    errormessage: "Invalid index"
-                };
+                send_response( res, 400, {error:true, errormessage:"Invalid index"});
+                return;
             }
         }
 
-        res.writeHead(status_code, { "Content-Type": "application/json" });
-        res.write(JSON.stringify(response_data), "utf-8");
-        res.end();
+        send_response( res, 404, { error:true, errormessage:"Invalid endpont/method"} );
     });
 
 });
