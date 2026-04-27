@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "typescript": "^5.4.3"
+  },
+
+  "scripts": {
+    "build": "cd TS ; tsc",
+    "clean": "find TS/* -name '*\\.js' -delete -or -name '*\\.map' -delete"
+  }
+}
