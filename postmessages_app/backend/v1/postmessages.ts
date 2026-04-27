@@ -169,8 +169,24 @@ let server = http.createServer( ( req, res ) => {
                 return;
             }
         }
+        else if( req.url === "/api/v1/hash" ) {
 
-        send_response( res, 404, { error:true, errormessage:"Invalid endpont/method"} );
+            // Secret endpoint, just to demonstrate why non-blocking functions
+            // are crucial in node.js
+
+            const crypto = require('crypto');
+            const ITERATIONS = 30000000;
+            crypto.pbkdf2('password123', 'salt', ITERATIONS, 64, 'sha512', (err:any, key:any) => {
+                send_response( res, 200, { hash: key.toString("base64") });
+            });
+
+        }
+        else {
+
+            send_response( res, 404, { error:true, errormessage:"Invalid endpont/method"} );
+
+        }
+
     });
 
 });
