@@ -54,17 +54,6 @@ let messages: Message[] = [];
 let ostream: fs.WriteStream;
 
 
-function send_response( res:http.ServerResponse, status_code:number, response_data:object )
-{
-    console.log("RESPONSE:");
-    console.log(`Status: ${status_code}`);
-    console.log(`Body: ${JSON.stringify(response_data)}`);
-
-    res.writeHead(status_code, { "Content-Type": "application/json" });
-    res.write( JSON.stringify(response_data), "utf-8");
-    res.end();
-    console.log("Response finished".inverse);
-}
 
 
 let server = http.createServer( ( req, res ) => {
@@ -76,6 +65,18 @@ let server = http.createServer( ( req, res ) => {
     console.log("     URL: ".red + req.url );
     console.log("  METHOD: ".red + req.method );
     console.log(" Headers: ".red + JSON.stringify( req.headers ) );
+
+    function send_response( status_code:number, response_data:object )
+    {
+        console.log("RESPONSE:");
+        console.log(`Status: ${status_code}`);
+        console.log(`Body: ${JSON.stringify(response_data)}`);
+
+        res.writeHead(status_code, { "Content-Type": "application/json" });
+        res.write( JSON.stringify(response_data), "utf-8");
+        res.end();
+        console.log("Response finished".inverse);
+    }
 
     let body: string = "";
 
@@ -106,7 +107,7 @@ let server = http.createServer( ( req, res ) => {
                                 ]
                             }
 
-            send_response( res, 200, response_data);
+            send_response( 200, response_data);
 
             // Do you want to test the NodeJS event loop? Uncomment
             // the following line to delay the response, and verify
@@ -118,7 +119,7 @@ let server = http.createServer( ( req, res ) => {
         }
         else if( req.url == "/api/v1/messages" && req.method == "GET" ) {
 
-            send_response( res, 200, messages );
+            send_response( 200, messages );
             return;
         }
         else if( req.url == "/api/v1/messages" && req.method == "POST" ) {
@@ -135,18 +136,18 @@ let server = http.createServer( ( req, res ) => {
                         console.log("Message appended to file");
                     });
 
-                    send_response( res, 200, {error:false, errormessage:""});
+                    send_response( 200, {error:false, errormessage:""});
                     return;
 
                 } else {
 
-                    send_response( res, 400, { error: true, errormessage: "Data is not a valid Message" } );
+                    send_response( 400, { error: true, errormessage: "Data is not a valid Message" } );
                     return;
                 }
 
             } catch( e ) {
 
-                send_response( res, 400, {error:true, errormessage:"JSON parse failed."});
+                send_response( 400, {error:true, errormessage:"JSON parse failed."});
                 return;
             }
         }
@@ -161,11 +162,11 @@ let server = http.createServer( ( req, res ) => {
                 messages[ queryidx ] = messages[ messages.length-1 ];
                 messages.pop();
 
-                send_response( res, 200, {error:false, errormessage:""});
+                send_response( 200, {error:false, errormessage:""});
                 return;
 
             } else {
-                send_response( res, 400, {error:true, errormessage:"Invalid index"});
+                send_response( 400, {error:true, errormessage:"Invalid index"});
                 return;
             }
         }
@@ -176,14 +177,26 @@ let server = http.createServer( ( req, res ) => {
 
             const crypto = require('crypto');
             const ITERATIONS = 30000000;
+
+            // async version
+            /***/ 
             crypto.pbkdf2('password123', 'salt', ITERATIONS, 64, 'sha512', (err:any, key:any) => {
-                send_response( res, 200, { hash: key.toString("base64") });
+                send_response( 200, { hash: key.toString("base64") });
             });
+            /**/
+
+            // sync version
+            /**
+            const key = crypto.pbkdf2Sync('password123', 'salt', ITERATIONS, 64, 'sha512');
+            send_response( 200, { hash: key.toString("base64") });
+            */
+
+
 
         }
         else {
 
-            send_response( res, 404, { error:true, errormessage:"Invalid endpont/method"} );
+            send_response( 404, { error:true, errormessage:"Invalid endpont/method"} );
 
         }
 

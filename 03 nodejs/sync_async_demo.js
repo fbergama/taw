@@ -14,7 +14,7 @@
  */
 
 const ITERATIONS = 30000000;    // <- This controls for how expensive the operation will be
-const use_sync = false;         // <- This selects sync or async variants
+const use_sync = true;         // <- This selects sync or async variants
 
 
 const crypto = require('crypto');   // Load the crypto built-in library
