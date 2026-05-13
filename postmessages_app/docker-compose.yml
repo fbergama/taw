@@ -1,0 +1,38 @@
+services:
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      - "4200:4200"
+#   depends-on:
+#     - backend
+#    networks:
+#      - taw
+
+  backend:
+    build:
+      context: ./backend/v3
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/mydatabase
+    networks:
+      - taw
+
+  mymongo:
+    image: mongo:6
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - taw
+
+networks:
+  taw:
+    driver: bridge
+
+volumes:
+  mongodb-data:
