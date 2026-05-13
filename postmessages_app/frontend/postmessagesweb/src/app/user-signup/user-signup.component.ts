@@ -3,9 +3,10 @@ import { UserHttpService, User } from '../user-http.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-user-signup',
-  templateUrl: './user-signup.component.html',
-  styleUrls: ['./user-signup.component.css']
+    selector: 'app-user-signup',
+    templateUrl: './user-signup.component.html',
+    styleUrls: ['./user-signup.component.css'],
+    standalone: false
 })
 export class UserSignupComponent implements OnInit {
 

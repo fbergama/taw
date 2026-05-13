@@ -8,6 +8,6 @@ EXPOSE 4200
 
 WORKDIR /app
 COPY postmessagesweb /app
-RUN npm install -g @angular/cli@18
+RUN npm install -g @angular/cli@19
 #RUN npm install
 

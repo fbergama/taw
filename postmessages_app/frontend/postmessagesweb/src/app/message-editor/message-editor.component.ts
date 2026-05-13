@@ -3,9 +3,10 @@ import {Message} from '../Message';
 import { MessageHttpService } from '../message-http.service';
 
 @Component({
-  selector: 'app-message-editor',
-  templateUrl: './message-editor.component.html',
-  styleUrls: ['./message-editor.component.css']
+    selector: 'app-message-editor',
+    templateUrl: './message-editor.component.html',
+    styleUrls: ['./message-editor.component.css'],
+    standalone: false
 })
 export class MessageEditorComponent implements OnInit {
 

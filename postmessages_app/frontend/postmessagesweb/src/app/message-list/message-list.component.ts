@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 import { SocketioService } from '../socketio.service';
 
 @Component({
-  selector: 'app-message-list',
-  templateUrl: './message-list.component.html',
-  styleUrls: ['./message-list.component.css']
+    selector: 'app-message-list',
+    templateUrl: './message-list.component.html',
+    styleUrls: ['./message-list.component.css'],
+    standalone: false
 })
 export class MessageListComponent implements OnInit {
 
