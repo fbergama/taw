@@ -24,9 +24,11 @@ import { SocketioService } from './socketio.service';
         UserLoginComponent,
         UserSignupComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent], 
+    imports: [BrowserModule,
         FormsModule,
-        AppRoutingModule], providers: [
+        AppRoutingModule], 
+    providers: [
         { provide: UserHttpService, useClass: UserHttpService },
         { provide: SocketioService, useClass: SocketioService },
         { provide: MessageHttpService, useClass: MessageHttpService },
