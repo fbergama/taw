@@ -131,7 +131,9 @@ declare global {
 let ios:SocketIOServer|undefined = undefined;
 
 
-// -------------------- MIDDLEWARES ----------------------------
+//////////////////////////////////////////////////////////////////////////////
+//      MIDDLEWARES
+//////////////////////////////////////////////////////////////////////////////
 
 
 // We create the JWT authentication middleware
@@ -146,6 +148,8 @@ let auth = jwt( {
                   algorithms: ["HS256"]
                 } );
 
+
+// Custom middlewares:
 
 function ensureModeratorRole( req : express.Request, res:express.Response, next: express.NextFunction )
 {
@@ -169,10 +173,58 @@ function ensureAdminRole( req : express.Request, res:express.Response, next: exp
   return next({ statusCode:403, error: true, errormessage: "Forbidden: user is not an admin"} );
 }
 
+/**
+ * Creating a new user or a new moderator is a very similar operation. The only difference is that
+ * creating a moderator requires an admin role. Therefore, we create a middleware to handle
+ * the creation of a new user, and design a different middleware chain to handle the two cases
+ * (see the routing definition below)
+ * 
+ * In Express.js, you can pass parameters to middleware functions by defining a function that takes additional 
+ * arguments for the parameters (isModerator in our case) and then returning the actual middleware function. 
+ * This pattern is often referred to as "middleware factories."
+ */
+function adduserMiddlewareFactory( isModerator:boolean ) {
+  return (req:express.Request, res:express.Response, next:express.NextFunction ) => {
+
+    req.body.roles = []; // this is to avoid users to create themselves as admins or moderators
+    let newuser:User = user.newUser( req.body );
+
+    if( !req.body.password ) {
+      return next({ statusCode:404, error: true, errormessage: "Password field missing"} );
+    }
+    newuser.setPassword( req.body.password );
+
+    if( isModerator )
+      newuser.setModerator();
+
+    console.log(`Creating new user ${newuser.username}, moderator: ${newuser.hasModeratorRole()}`);
+
+    newuser.save().then( (data) => {
+      return res.status(200).json({ error: false, errormessage: "", id: data._id });
+    }).catch( (reason) => {
+      if( reason.code === 11000 )
+        return next({statusCode:404, error:true, errormessage: "User already exists"} );
+      return next({ statusCode:404, error: true, errormessage: "DB error: "+reason.errmsg });
+    })
+
+  }
+}
+
+
 // -------------- END OF MIDDLEWARES DEFINITION ----------------------
 
 
 let app = express();
+
+
+// By default, web browsers enforce a strict security rule that blocks a website on 
+// one domain from fetching data from an API on a completely different domain. 
+// A server sends CORS headers, in particularly Access-Control-Allow-Origin 
+// to give the client browser to make HTTP requests from a different website
+
+// the cors middleware inserts Acces-Control-Allow-Origin automatically
+// to any given response
+
 app.use( cors() );
 
 
@@ -183,6 +235,8 @@ app.use( cors() );
 app.use( express.json( ) );
 
 
+// Install a custom top-level logging middleware on any
+// endpoint
 app.use( (req,res,next) => {
   console.log("------------------------------------------------".inverse);
   console.log("New request for: "+req.url );
@@ -194,11 +248,9 @@ app.use( (req,res,next) => {
 
 
 
-
-
-
-// Add API routes to express application
-//
+//////////////////////////////////////////////////////////////////////////////
+//      API ROUTES
+//////////////////////////////////////////////////////////////////////////////
 
 app.get("/api/v3", (req,res) => {
 
@@ -292,38 +344,6 @@ app.get('/api/v3/users', auth, ensureModeratorRole, (req,res,next) => {
 
 });
 
-
-/**
- * In Express.js, you can pass parameters to middleware functions by defining a function that takes additional 
- * arguments for the parameters (isModerator in our case) and then returning the actual middleware function. 
- * This pattern is often referred to as "middleware factories."
- */
-function adduserMiddlewareFactory( isModerator:boolean ) {
-  return (req:express.Request, res:express.Response, next:express.NextFunction ) => {
-
-    req.body.roles = []; // this is to avoid users to create themselves as admins or moderators
-    let newuser:User = user.newUser( req.body );
-
-    if( !req.body.password ) {
-      return next({ statusCode:404, error: true, errormessage: "Password field missing"} );
-    }
-    newuser.setPassword( req.body.password );
-
-    if( isModerator )
-      newuser.setModerator();
-
-    console.log(`Creating new user ${newuser.username}, moderator: ${newuser.hasModeratorRole()}`);
-
-    newuser.save().then( (data) => {
-      return res.status(200).json({ error: false, errormessage: "", id: data._id });
-    }).catch( (reason) => {
-      if( reason.code === 11000 )
-        return next({statusCode:404, error:true, errormessage: "User already exists"} );
-      return next({ statusCode:404, error: true, errormessage: "DB error: "+reason.errmsg });
-    })
-
-  }
-}
 
 app.post('/api/v3/users', adduserMiddlewareFactory( false ) );
 app.post('/api/v3/users/moderators', auth, ensureAdminRole, adduserMiddlewareFactory( true ) );
@@ -426,13 +446,14 @@ app.get("/api/v3/login", passport.authenticate('basic', { session: false }), (re
 
 
 
-// Add error handling middleware
+// Add a global error handling middleware
 app.use(( (err,req,res,next) => {
 
   console.log("Request error: ".red + JSON.stringify(err) );
   res.status( err.statusCode || 500 ).json( err );
 
 } ) as express.ErrorRequestHandler);
+
 
 
 // The very last middleware will report an error 404 
@@ -443,6 +464,12 @@ app.use( (req,res,next) => {
   res.status(404).json({statusCode:404, error:true, errormessage: "Invalid endpoint"} );
 })
 
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+//      Application bootstrap
+//////////////////////////////////////////////////////////////////////////////
 
 
 // Connect to mongodb and launch the HTTP server trough Express
