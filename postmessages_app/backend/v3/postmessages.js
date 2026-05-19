@@ -242,7 +242,8 @@ app.route("/api/v3/messages").get(auth, (req, res, next) => {
         message.getModel().create(recvmessage).then((data) => {
             if (ios) {
                 // Notify all socket.io clients
-                ios.emit(JSON.stringify(data));
+                console.log("socket.io send");
+                ios.emit("broadcast", JSON.stringify(data));
             }
             return res.status(200).json({ error: false, errormessage: "", id: data._id });
         }).catch((reason) => {
@@ -408,7 +409,7 @@ mongoose.connect('mongodb://mymongo:27017/postmessages')
     let server = http.createServer(app);
     ios = new socket_io_1.Server(server, {
         cors: {
-            origin: "http://localhost:4200" // See: https://socket.io/docs/v4/handling-cors/#configuration
+            origin: ["http://localhost:4200", "http://localhost:4201", "http://localhost:8080"] // See: https://socket.io/docs/v4/handling-cors/#configuration
         }
     });
     ios.on('connection', function (client) {
