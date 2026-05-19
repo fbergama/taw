@@ -23,7 +23,7 @@ export class SocketioService {
 
 
       // Connect to the server
-      let socket = io(this.us.url);
+      let socket = io(this.us.host);
 
       // Register a callback when the "broadcast" event is received
       socket.on('broadcast', (m:any) => {

@@ -29,7 +29,8 @@ export interface User {
 export class UserHttpService {
 
   private token: string = '';
-  public url = 'http://localhost:8080/api/v3'; // WebService URL
+  public host = 'http://localhost:8080'
+  public url = this.host+'/api/v3'; // WebService URL
 
   constructor( private http: HttpClient ) {
     console.log('User service instantiated');
