@@ -10,7 +10,7 @@ services:
 #    networks:
 #      - taw
 
-  backend:
+  postmessages_backend:
     build:
       context: ./backend/v3
       dockerfile: Dockerfile
@@ -30,9 +30,12 @@ services:
     networks:
       - taw
 
+
 networks:
   taw:
+    name: taw
     driver: bridge
+    external: true
 
 volumes:
   mongodb-data:
