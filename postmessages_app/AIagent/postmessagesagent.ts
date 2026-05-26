@@ -104,6 +104,7 @@ async function create_user_and_login( username:string, mail:string, password:str
     } catch( e ) {
       if( typeof e === "object" && e !== null  && "errormessage" in e ) {
         console.log( (e as APIReturnStatus).errormessage );
+        attempts=0;
       } else {
         console.log("Connection error, retrying in 5 sec...")
         await new Promise(resolve => setTimeout(resolve, 5000));
@@ -118,9 +119,9 @@ async function create_user_and_login( username:string, mail:string, password:str
 }
 
 
-async function get_last_messages(token:string):Promise<string> {
+async function get_last_messages(token:string):Promise<{messages:Message[], msgstring:string}> {
 
-    let messages:Message[] = await make_request( build_options(host, port, "/api/v3/messages?skip=0&limit=5", "GET", undefined, token), undefined ) as Message[];
+    let messages:Message[] = await make_request( build_options(host, port, "/api/v3/messages?skip=0&limit=10", "GET", undefined, token), undefined ) as Message[];
 
     let retstr = "";
     messages.forEach( (message) => {
@@ -130,7 +131,7 @@ async function get_last_messages(token:string):Promise<string> {
 
     });
 
-    return retstr;
+    return {messages: messages, msgstring:retstr};
 }
 
 
@@ -152,7 +153,7 @@ async function chat_with_ollama( last_messages:string, user:string ):Promise<Age
       model: 'llama3', // Ensure you have this model pulled via `ollama run llama3`
       messages: [
         { role: 'system', content: 'Your task is to impersonate john, alice and bob who interact to an online message board application similar to twitter. Generate *short* realistic messages coherent with the provided history. The format is: [name] message content (#tag1 #tag2 ...). You can add at most 3 pertinent tags. Generate a single response without additional comments. Reply to users other than john, bob and alice with higher priority.' },
-        { role: 'user', content: `Here are the last 5 messages. What should ${user} reply?\n\n${last_messages}` }
+        { role: 'user', content: `Here are the last posted messages from newest to oldest. What should ${user} reply?\n\n${last_messages}` }
       ]
       // stream: false is the default here, so we get the whole response at once
     });
@@ -207,12 +208,23 @@ async function main() {
     while( true ) {
 
 
+      const messages = await get_last_messages(agents[0].token);
+      if( messages.messages.length == 0 ) {
+        console.log("No message yet.. waiting");
+        await sleep( Math.random()*15000+5000 );
+        continue;
+      }
+      //console.log("--------- last messages -------");
+      //console.log(messages);
+      //console.log("---------------------------------");
+
+      console.log( messages.messages );
+
       let curr_agent = Math.floor(Math.random() * agents.length);
-      const messages = await get_last_messages(agents[curr_agent].token);
-      console.log("--------- last 5 messages -------");
-      console.log(messages);
-      console.log("---------------------------------");
-      const agent_response = await chat_with_ollama(messages, agents[curr_agent].username);
+      if( messages.messages[0].authormail == agents[curr_agent].mail ) {
+        curr_agent = (curr_agent + 1)%agents.length;
+      }
+      const agent_response = await chat_with_ollama(messages.msgstring, agents[curr_agent].username);
 
       if (agent_response) {
         await post_message(agents[curr_agent].token, agent_response.content, agent_response.tags);
