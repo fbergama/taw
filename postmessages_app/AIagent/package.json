@@ -1,0 +1,17 @@
+{
+  "name": "postmessages_aiagent",
+  "version": "1.0.0",
+  "description": "A simple AI agent project written in TypeScript.",
+  "main": "dist/postmessagesagent.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/postmessagesagent.js"
+  },
+  "dependencies": {
+    "ollama": "^0.6.3",
+    "typescript": "^4.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37"
+  }
+}

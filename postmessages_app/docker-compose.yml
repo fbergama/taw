@@ -1,19 +1,38 @@
-version: '3.8'
+#   To run the full stack:
+#   docker compose --profile ai --profile frontend up
+#
+#   Frontend + backend
+#   docker compose --profile frontend up
+#
+#   Backend only
+#   docker compose up
+
 services:
-  postmessages_frontend:
+  frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "4200:4200"
     depends_on:
-     - postmessages_backend
+     - backend
     networks:
       - taw
-    profiles:
-      - frontend
+    profiles: [frontend]
 
-  postmessages_backend:
+
+  aiagent:
+    build:
+      context: ./AIagent
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    networks:
+      - taw
+    profiles: [ai]
+
+
+  backend:
     build:
       context: ./backend/v3
       dockerfile: Dockerfile
