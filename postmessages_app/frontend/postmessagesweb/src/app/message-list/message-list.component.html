@@ -6,7 +6,7 @@
         <h5 class="card-title"><i class="far fa-envelope"></i>&nbsp;{{message.authormail}}</h5>        
         <h6 class="card-subtitle mb-2 text-muted">{{message.timestamp | date}} / {{message.timestamp | date:'shortTime'}}</h6>
         <p class="card-text">{{ message.content }}</p>
-        <span *ngFor="let tag of message.tags" class="badge bg-secondary tag">{{tag}}</span>
+        <span *ngFor="let tag of message.tags" class="badge bg-secondary tag">#{{tag}}</span>
     </div>
 </div>
 

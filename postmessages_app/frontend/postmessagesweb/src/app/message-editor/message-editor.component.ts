@@ -37,7 +37,9 @@ export class MessageEditorComponent implements OnInit {
   }
 
   add_tag( tag: string ) {
-    this.message.tags = this.message.tags.concat([ tag]);
+    if( tag.startsWith("#"))
+      tag = tag.replace("#","")
+    this.message.tags = this.message.tags.concat([tag]);
   }
 
   post_message( ) {
