@@ -146,7 +146,7 @@ async function post_message( token:string, message:string, tags:string[] ):Promi
 const customOllama = new Ollama({ host: 'http://host.docker.internal:11434' });
 
 async function chat_with_ollama( last_messages:string, user:string ):Promise<AgentResponse|undefined> {
-  console.log('Thinking...');
+  console.log('\nThinking...');
 
   try {
     const response = await customOllama.chat({
@@ -158,7 +158,7 @@ async function chat_with_ollama( last_messages:string, user:string ):Promise<Age
       // stream: false is the default here, so we get the whole response at once
     });
 
-    console.log('\nOllama Response:');
+    console.log('Ollama Response:');
     console.log(response.message.content);
 
     function removeLeadingLines(inputString: string): string {
@@ -200,15 +200,16 @@ async function main() {
   try {
 
     for( let agent of agents ) {
-      agent.token = await create_user_and_login( agent.username, agent.mail, agent.password );
+      do {
+        agent.token = await create_user_and_login( agent.username, agent.mail, agent.password );
+      } while( !agent.token );
     }
 
-    //await post_message( agents[0].token, "hello everyone!", ["happy", "greetings"] );
 
     while( true ) {
 
-
       const messages = await get_last_messages(agents[0].token);
+      console.log(`\n${messages.messages.length} messages retrieved`);
       if( messages.messages.length == 0 ) {
         console.log("No message yet.. waiting");
         await sleep( Math.random()*15000+5000 );
@@ -218,7 +219,7 @@ async function main() {
       //console.log(messages);
       //console.log("---------------------------------");
 
-      console.log( messages.messages );
+      //console.log( messages.messages );
 
       let curr_agent = Math.floor(Math.random() * agents.length);
       if( messages.messages[0].authormail == agents[curr_agent].mail ) {
