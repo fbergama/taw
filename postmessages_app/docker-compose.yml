@@ -1,14 +1,17 @@
+version: '3.8'
 services:
-#  frontend:
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    ports:
-#      - "4200:4200"
-#   depends-on:
-#     - backend
-#    networks:
-#      - taw
+  postmessages_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+     - postmessages_backend
+    networks:
+      - taw
+    profiles:
+      - frontend
 
   postmessages_backend:
     build:
@@ -18,6 +21,8 @@ services:
       - "8080:8080"
     environment:
       MONGODB_URI: mongodb://mongodb:27017/mydatabase
+    depends_on:
+      - mymongo
     networks:
       - taw
 
