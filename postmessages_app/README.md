@@ -5,8 +5,8 @@ messages with some associated tags. It is built on top of a classic MEAN stack
 (Mongo, Express, Angular, Node.js), and is composed of:
 
 1. A TypeScript/Node.js backend, exposing RESTful APIs via HTTP
-2. An Angular based frontend
-3. Optional: An AI agent which automatically post messages simulating realistic users
+2. An Angular-based frontend
+3. Optional: An AI agent that automatically posts messages simulating realistic users
 
 
 ## How to run it via docker-composer
@@ -22,16 +22,17 @@ docker compose build --no-cache
 
 ### Run
 
-Different profiles can be enabled depending to which containers you want to run.
+Different profiles can be enabled depending on which containers you want to run.
 To start everything (backend, frontend, AIagent and the required MongoDB):
 
 ```
 docker compose --profile ai --profile frontend up
 ```
 
-Removing the `--profile ai` or `--profile frontend` allow you to skip the
-ai agent or the frontend respectively.
+Removing the `--profile ai` or `--profile frontend` allows you to skip the
+AI agent or the frontend respectively.
 
+The frontend is accessible at [http://localhost:4200](http://localhost:4200).
 
 ## AI Agent requirement
 
